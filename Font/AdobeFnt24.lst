@@ -1,0 +1,55 @@
+%!Adobe-FontList 1.24
+%Locale:0x409
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Type1
+FontName:AdamantSansBG
+FamilyName:Adamant Sans BG
+StyleName:Regular
+FullName:Adamant Sans BG
+MenuName:Adamant Sans BG
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:C:\Users\Admin\Documents\Phoenix Code\Test\Font\AdamantSansBG.otf
+DataFormat:sfntData
+UsesStandardEncoding:yes
+isCFF:yes
+hasSVG:no
+hasCOLR:no
+VariableFontType:NonVariableFont
+FileLength:119092
+FileModTime:1379247096
+WeightClass:400
+WidthClass:5
+AngleClass:0
+NameArray:0,Mac,4,Adamant Sans BG
+NameArray:0,Win,1,Adamant Sans BG
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Type1
+FontName:LovelyGraceBG
+FamilyName:Lovely Grace BG
+StyleName:Regular
+FullName:Lovely Grace BG
+MenuName:Lovely Grace BG
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:C:\Users\Admin\Documents\Phoenix Code\Test\Font\LovelyGraceBG.otf
+DataFormat:sfntData
+UsesStandardEncoding:yes
+isCFF:yes
+hasSVG:no
+hasCOLR:no
+VariableFontType:NonVariableFont
+FileLength:27168
+FileModTime:1286814958
+WeightClass:400
+WidthClass:5
+AngleClass:0
+NameArray:0,Mac,4,Lovely Grace BG
+NameArray:0,Win,1,Lovely Grace BG
+%EndFont
+
