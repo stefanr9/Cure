@@ -1904,14 +1904,166 @@ img.fullscreen {
 /*RESPONSIVE LOCATION 2*/
 @media (max-width: 1300px) {
 .location-img {
-    border-radius: 10px;       
-    overflow: hidden; 
+    border-radius: 10px;
+    overflow: hidden;
 }
 .location-img img {
     width: 100%;
-    height: auto; 
+    height: auto;
     object-fit: contain;
     border-radius: 10px;
     display: block;
-    } 
+    }
+}
+
+
+/* =====================================================================
+   POLISH & ANIMATION SUPPORT
+   (dodato radi profesionalnijeg izgleda + GSAP scroll animacija)
+   ===================================================================== */
+
+/* ---- Tipografija: prijatniji razmak u pasusima, bez pomeranja layouta ---- */
+.about p,
+.page-about-paragraph,
+.recommended-item p,
+.image-link p {
+    line-height: 1.6;
+}
+
+/* ---- Reveal: elementi koje GSAP animira unapred su nevidljivi SAMO kada
+   je klasa `anim` na <html> (dodaje je inline skripta u <head> ako korisnik
+   NE traži smanjene animacije). Ako GSAP ne uspe da se učita, animations.js
+   uklanja klasu i sve postaje vidljivo. ---- */
+html.anim .hero-content h1,
+html.anim .hero-content-bottom,
+html.anim .image-link,
+html.anim .home-about h1,
+html.anim .home-about .divider,
+html.anim .home-about .divider2,
+html.anim .home-about p,
+html.anim .about-slider-div,
+html.anim .recommended-heading,
+html.anim .recommended-item,
+html.anim .recommended-button,
+html.anim .footer .footer-item,
+html.anim .page-about-paragraph,
+html.anim .page-about-slider-div,
+html.anim .about-container h2,
+html.anim .img-page-about,
+html.anim .footer-other .footer-other-item,
+html.anim .gallery h1,
+html.anim .gallery-navigation-container,
+html.anim .gallery-grid-item,
+html.anim .menu-section h1,
+html.anim .menu-header,
+html.anim .menu-grid-item,
+html.anim .h1loc,
+html.anim .location,
+html.anim .location-mail {
+    opacity: 0;
+}
+
+/* ---- Dugmad: konzistentan, suptilan lift + senka ---- */
+.hero .hero-button,
+.recommended-button,
+.top-link {
+    box-shadow: 0 4px 12px rgba(95, 2, 31, 0.18);
+    transition: transform 0.25s ease, background-color 0.25s ease,
+        box-shadow 0.25s ease;
+    will-change: transform;
+}
+.hero .hero-button:hover,
+.recommended-button:hover,
+.top-link:hover {
+    background-color: #8a052a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(95, 2, 31, 0.28);
+}
+.hero .hero-button:active,
+.recommended-button:active,
+.top-link:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(95, 2, 31, 0.22);
+}
+
+/* ---- Kartice: blagi lift na hover ---- */
+.image-link {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform;
+}
+.image-link:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.14);
+}
+
+.recommended-item {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform;
+}
+.recommended-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.10);
+}
+
+/* ---- Navigacija: suptilna linija koja "izlazi" ispod linka ---- */
+.left-nav > li > a,
+.right-nav > li > a {
+    position: relative;
+}
+.left-nav > li > a::after,
+.right-nav > li > a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    height: 2px;
+    width: 100%;
+    background-color: #8a052a;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.3s ease;
+}
+.left-nav > li > a:hover::after,
+.right-nav > li > a:hover::after {
+    transform: scaleX(1);
+}
+
+/* ---- Galerijska navigacija: linkovi ---- */
+.gallery-navigation a,
+.footer-item a,
+.footer-other-item a {
+    transition: color 0.25s ease;
+}
+
+/* ---- Pristupačnost: jasan fokus za tastaturu ---- */
+a:focus-visible,
+button:focus-visible,
+.hero .hero-button:focus-visible,
+.recommended-button:focus-visible,
+.top-link:focus-visible {
+    outline: 3px solid #8a052a;
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* ---- Poštovanje prefers-reduced-motion: gase se sve animacije/tranzicije,
+   ali hero slika ostaje staticno vidljiva (prvi slajd). ---- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+    html {
+        scroll-behavior: auto;
+    }
+    .hero-slide {
+        animation: none !important;
+    }
+    .hero-slide:nth-child(1) {
+        opacity: 1 !important;
+    }
 }
