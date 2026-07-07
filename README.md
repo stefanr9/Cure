@@ -18,3 +18,7 @@ Rezultati testiranja:
 3. Hero slika postoji nakon isključivanja animacija, hero slike se ne smenjuju 
 4. Funkcija fullscreen ne radi, ostale funkcije rade.
 5. Nije primećen momenat bljeska sadržaja.
+
+Primećeno (nije bug ali je primetno):
+
+Desktop verzija, početna strana, horizontalni div-ovi u nizu od 3 nakon nizanja poskoče za još par pixela 
