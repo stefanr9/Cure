@@ -9,3 +9,12 @@
   4. Postojeće funkcije — klik na sliku (fullscreen), dropdown „Јеловник", burger meni na telefonu, slideri sa
   strelicama i tačkicama — da sve radi kao pre.
   5. Bez treptaja — na sporijem učitavanju proveri da nema momenta gde sadržaj bljesne pa nestane.
+
+Rezultati testiranja:
+
+1. Sajt je live na https://stefanr9.github.io/Cure/index.html, sve animacije rade.
+2. Na desktop verziji nizanje u jelovniku ne radi smooth (mislim da je problem rezolucija slika, u galeriji sam ih već ranije smanjio zbog sporog učitavanja).
+2.2 Učitavanje google mapa na stranici lokacija ima primetan delay, i na desktop i na mobile verziji
+3. Hero slika postoji nakon isključivanja animacija, hero slike se ne smenjuju 
+4. Funkcija fullscreen ne radi, ostale funkcije rade.
+5. Nije primećen momenat bljeska sadržaja.
