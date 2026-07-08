@@ -27,10 +27,12 @@ body.no-scroll {
 @font-face {
     font-family: "CustomFont";
     src: url("Font/LovelyGraceBG.otf") format("opentype");
+    font-display: swap;
 }
 @font-face {
     font-family: "SecondFont";
     src: url("Font/AdamantSansBG.otf") format("opentype");
+    font-display: swap;
 }
 
 /* =================== HEADER BASE =================== */
@@ -284,13 +286,14 @@ body.no-scroll {
     margin-top: 125px; /* Header space padding */
 }
 
-/* Hero slider */
+/* Hero slider — nešto veći od hero-a da parallax pomeranje nikad ne otkrije ivice */
 .hero-slider {
     position: absolute;
-    top: 0;
+    top: -11%;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 122%;
+    will-change: transform;
 }
 
 .hero-slide {
@@ -302,7 +305,9 @@ body.no-scroll {
     background-size: cover;
     background-position: center;
     opacity: 0; /* Start hidden */
-    animation: fade 24s infinite; /* Fade effect */
+    /* Fade + spori Ken Burns zoom (slika „diše" umesto da stoji) */
+    animation: fade 24s infinite;
+    will-change: opacity, transform;
 }
 .hero-slide:nth-child(1) {
     animation-delay: 0s;
@@ -315,19 +320,23 @@ body.no-scroll {
 .hero-slide:nth-child(3) {
     animation-delay: 16s;
 }
-/* Fade Animation */
+/* Fade + Ken Burns Animation */
 @keyframes fade {
     0% {
         opacity: 0;
+        transform: scale(1);
     }
     25% {
         opacity: 1;
+        transform: scale(1.05);
     }
     50% {
         opacity: 0;
+        transform: scale(1.1);
     }
     100% {
         opacity: 0;
+        transform: scale(1);
     }
 }
 
@@ -1825,12 +1834,51 @@ img.fullscreen {
 }
 
 .location-map {
-    grid-column: 1;   
-    grid-row: 2;        
+    grid-column: 1;
+    grid-row: 2;
+    position: relative;
 }
 
 .location-map iframe {
-    border-radius: 10px;    
+    border-radius: 10px;
+}
+
+/* ---- Mapa: elegantno stanje učitavanja da maskira spori Google Maps embed.
+   Klasu `map-fade` dodaje script.js (progressive enhancement) — bez JS-a se
+   mapa prikazuje normalno. Kad se iframe učita, dobija se `map-ready`. ---- */
+.location-map.map-fade {
+    background: #efe9e6;
+    overflow: hidden;
+    border-radius: 10px;
+}
+.location-map.map-fade::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 34px;
+    height: 34px;
+    margin: -17px 0 0 -17px;
+    border: 3px solid rgba(110, 68, 70, 0.25);
+    border-top-color: #6e4446;
+    border-radius: 50%;
+    animation: map-spin 0.8s linear infinite;
+    z-index: 0;
+}
+.location-map.map-fade iframe {
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+.location-map.map-ready iframe {
+    opacity: 1;
+}
+.location-map.map-ready::after {
+    display: none;
+}
+@keyframes map-spin {
+    to { transform: rotate(360deg); }
 }
 
 .location-img {
@@ -2047,23 +2095,7 @@ button:focus-visible,
     border-radius: 4px;
 }
 
-/* ---- Poštovanje prefers-reduced-motion: gase se sve animacije/tranzicije,
-   ali hero slika ostaje staticno vidljiva (prvi slajd). ---- */
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.001ms !important;
-    }
-    html {
-        scroll-behavior: auto;
-    }
-    .hero-slide {
-        animation: none !important;
-    }
-    .hero-slide:nth-child(1) {
-        opacity: 1 !important;
-    }
-}
+/* ---- NAPOMENA: po odluci klijenta animacije se prikazuju SVIMA. Blok koji je
+   ranije gasio animacije pri prefers-reduced-motion je namerno uklonjen.
+   Da se pristupačnost vrati, ovde dodaj @media (prefers-reduced-motion: reduce)
+   koji gasi hero animaciju/tranzicije i pinuje prvi hero slajd. ---- */

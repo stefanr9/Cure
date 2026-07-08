@@ -3,10 +3,12 @@
    ---------------------------------------------------------------------
    - Dodaje suptilne fade/slide-up reveal animacije dok se skroluje.
    - Glatka animacija hero sekcije pri učitavanju.
-   - Poštuje prefers-reduced-motion (animacije se potpuno gase).
-   - Fail-safe: ako GSAP nije učitan (npr. CDN blokiran) ili je uključen
-     reduced-motion, uklanja se klasa `anim` sa <html> tako da CSS koji
-     unapred sakriva elemente prestaje da važi i sav sadržaj ostaje vidljiv.
+   - NAPOMENA: po odluci klijenta animacije se prikazuju SVIMA, bez obzira
+     na prefers-reduced-motion (namerno se ignoriše). Da se pristupačnost
+     vrati, vidi guard ispod i @media blokove u style.css.
+   - Fail-safe: ako GSAP nije učitan (npr. CDN blokiran), uklanja se klasa
+     `anim` sa <html> tako da CSS koji unapred sakriva elemente prestaje da
+     važi i sav sadržaj ostaje vidljiv.
    - Ne dira postojeću funkcionalnost (slideri, meni, fullscreen) — to je
      u script.js i radi nezavisno.
    ===================================================================== */
@@ -15,13 +17,10 @@
 
     var root = document.documentElement;
 
-    var reduceMotion =
-        window.matchMedia &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // Ako nema GSAP-a ili korisnik traži smanjene animacije — ništa ne animiramo
-    // i osiguravamo da sve bude vidljivo.
-    if (!window.gsap || !window.ScrollTrigger || reduceMotion) {
+    // Ako nema GSAP-a (npr. CDN blokiran/offline) — ništa ne animiramo i
+    // osiguravamo da sve bude vidljivo. (reduced-motion se NAMERNO ne proverava
+    // — animacije idu svima; vrati proveru ovde ako zatreba pristupačnost.)
+    if (!window.gsap || !window.ScrollTrigger) {
         root.classList.remove("anim");
         return;
     }
@@ -35,21 +34,36 @@
         return document.querySelector(selector);
     }
 
-    /* Grupni reveal: elementi se pojavljuju (opciono uz stagger) kada
-       njihov okidač uđe u vidno polje. */
+    /* Grupni reveal: elementi „uleću" (fade + pomeraj/zum) kada njihov
+       okidač uđe u vidno polje. Podržava y (podizanje), x (smer), scale
+       (rast slike) i rotate za izražajnije ulaske. */
     function reveal(selector, o) {
         var els = qa(selector);
         if (!els.length) return;
         o = o || {};
         gsap.fromTo(
             els,
-            { opacity: 0, y: o.y == null ? 26 : o.y },
+            {
+                opacity: 0,
+                y: o.y == null ? 28 : o.y,
+                x: o.x || 0,
+                scale: o.scale == null ? 1 : o.scale,
+                rotate: o.rotate || 0
+            },
             {
                 opacity: 1,
                 y: 0,
-                duration: o.duration || 0.7,
-                ease: "power2.out",
+                x: 0,
+                scale: 1,
+                rotate: 0,
+                duration: o.duration || 0.85,
+                ease: o.ease || "power3.out",
                 stagger: o.stagger || 0,
+                // Očisti inline transform kad reveal završi: sprečava
+                // (1) da rezidualni transform postane containing block
+                //     za position:fixed (razbijao fullscreen slika), i
+                // (2) sub-pixel "poskakivanje" kartica nakon sletanja.
+                clearProps: "transform",
                 scrollTrigger: {
                     trigger: o.trigger || els[0],
                     start: o.start || "top 85%",
@@ -65,7 +79,11 @@
         var els = qa(selector);
         if (!els.length) return;
         o = o || {};
-        gsap.set(els, { opacity: 0, y: o.y == null ? 26 : o.y });
+        gsap.set(els, {
+            opacity: 0,
+            y: o.y == null ? 22 : o.y,
+            scale: o.scale == null ? 1 : o.scale
+        });
         ScrollTrigger.batch(els, {
             start: o.start || "top 88%",
             once: true,
@@ -73,11 +91,34 @@
                 gsap.to(b, {
                     opacity: 1,
                     y: 0,
+                    scale: 1,
                     duration: o.duration || 0.6,
-                    ease: "power2.out",
+                    ease: o.ease || "power3.out",
                     stagger: o.stagger || 0.08,
-                    overwrite: true
+                    overwrite: true,
+                    // vidi komentar u reveal(): čisti transform po završetku
+                    // (ključno za fullscreen na galeriji/jelovniku)
+                    clearProps: "transform"
                 });
+            }
+        });
+    }
+
+    /* Parallax: element se pomera vezano za scroll (scrub) radi osećaja
+       dubine. Koristi se SAMO za dekorativne slojeve (hero pozadina/tekst),
+       nikad za mreže sa fullscreen slikama (transform bi razbio fixed). */
+    function parallax(selector, o) {
+        var el = q(selector);
+        if (!el) return;
+        o = o || {};
+        gsap.to(el, {
+            yPercent: o.yPercent,
+            ease: "none",
+            scrollTrigger: {
+                trigger: o.trigger || el,
+                start: o.start || "top top",
+                end: o.end || "bottom top",
+                scrub: o.scrub == null ? 0.6 : o.scrub
             }
         });
     }
@@ -89,55 +130,65 @@
             if (q(".hero-content h1")) {
                 tl.fromTo(
                     ".hero-content h1",
-                    { opacity: 0, y: 34, scale: 0.97 },
-                    { opacity: 1, y: 0, scale: 1, duration: 1.0 },
+                    { opacity: 0, y: 44, scale: 0.94 },
+                    { opacity: 1, y: 0, scale: 1, duration: 1.1 },
                     0.1
                 );
             }
             if (q(".hero-content-bottom")) {
                 tl.fromTo(
                     ".hero-content-bottom",
-                    { opacity: 0, y: 22 },
-                    { opacity: 1, y: 0, duration: 0.8 },
-                    0.45
+                    { opacity: 0, y: 30 },
+                    { opacity: 1, y: 0, duration: 0.9 },
+                    0.5
                 );
             }
         }
 
+        /* ---------------- HERO parallax (pomeranje pri skrolu) ----------------
+           Pozadina se pomera sporije, tekst brže -> osećaj dubine.
+           yPercent se KOMBINUJE sa intro `y` (px) jer GSAP čuva odvojeno. */
+        parallax(".hero-slider", { yPercent: -8, trigger: ".hero", scrub: 0.6 });
+        parallax(".hero-content", { yPercent: -48, trigger: ".hero", scrub: 0.5 });
+        parallax(".hero-content-bottom", { yPercent: -26, trigger: ".hero", scrub: 0.5 });
+
         /* ---------------- POČETNA ---------------- */
-        reveal(".image-link", { trigger: ".image-links", stagger: 0.15 });
-        reveal(".home-about h1", { stagger: 0.1 });
-        reveal(".home-about .divider, .home-about .divider2", {});
-        reveal(".home-about p", { stagger: 0.12 });
-        reveal(".about-slider-div", {});
-        reveal(".recommended-heading", {});
-        reveal(".recommended-item", { trigger: ".recommended", stagger: 0.15 });
-        reveal(".recommended-button", {});
-        batch(".footer .footer-item", { stagger: 0.12 });
+        // 3 kartice ulaze naizmenično (leva/sredina/desna) uz blagi zum
+        reveal(".image-links .image-link:nth-child(1)", { x: -50, y: 20, scale: 0.94 });
+        reveal(".image-links .image-link:nth-child(2)", { y: 44, scale: 0.94, duration: 0.95 });
+        reveal(".image-links .image-link:nth-child(3)", { x: 50, y: 20, scale: 0.94 });
+        reveal(".home-about h1", { y: 42, scale: 0.96, stagger: 0.1 });
+        reveal(".home-about .divider, .home-about .divider2", { scale: 0.8, duration: 0.9 });
+        reveal(".home-about p", { y: 34, stagger: 0.12 });
+        reveal(".about-slider-div", { y: 40, scale: 0.96 });
+        reveal(".recommended-heading", { y: 42, scale: 0.96 });
+        reveal(".recommended-item", { trigger: ".recommended", stagger: 0.18, y: 46, scale: 0.9 });
+        reveal(".recommended-button", { y: 24 });
+        batch(".footer .footer-item", { stagger: 0.12, y: 26 });
 
         /* ---------------- O NAMA ---------------- */
-        reveal(".page-about-paragraph", { stagger: 0.1 });
-        batch(".page-about-slider-div", {});
-        reveal(".about-container h2", {});
-        reveal(".img-page-about", {});
+        reveal(".page-about-paragraph", { y: 34, stagger: 0.12 });
+        batch(".page-about-slider-div", { y: 40, scale: 0.96 });
+        reveal(".about-container h2", { y: 40, scale: 0.96 });
+        reveal(".img-page-about", { y: 40, scale: 0.93 });
 
         /* ---------------- GALERIJA ---------------- */
-        reveal(".gallery h1", {});
-        reveal(".gallery-navigation-container", {});
-        batch(".gallery-grid-item", { stagger: 0.06, y: 20 });
+        reveal(".gallery h1", { y: 44, scale: 0.96 });
+        reveal(".gallery-navigation-container", { y: 20 });
+        batch(".gallery-grid-item", { stagger: 0.06, y: 24, scale: 0.94 });
 
         /* ---------------- JELOVNIK ---------------- */
-        reveal(".menu-section h1", {});
-        reveal(".menu-header", {});
-        batch(".menu-grid-item", { stagger: 0.06, y: 20 });
+        reveal(".menu-section h1", { y: 44, scale: 0.96 });
+        reveal(".menu-header", { y: 26 });
+        batch(".menu-grid-item", { stagger: 0.05, y: 24, scale: 0.94 });
 
         /* ---------------- LOKACIJE ---------------- */
-        reveal(".h1loc", {});
-        batch(".location", { stagger: 0.1 });
-        reveal(".location-mail", {});
+        reveal(".h1loc", { y: 44, scale: 0.96 });
+        batch(".location", { stagger: 0.12, y: 34, scale: 0.97 });
+        reveal(".location-mail", { y: 24 });
 
         /* ---------------- Footer (ostale stranice) ---------------- */
-        batch(".footer-other .footer-other-item", { stagger: 0.12 });
+        batch(".footer-other .footer-other-item", { stagger: 0.12, y: 26 });
 
         ScrollTrigger.refresh();
     }

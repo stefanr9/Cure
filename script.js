@@ -14,18 +14,39 @@ document.addEventListener("DOMContentLoaded", () => {
             // Close all fullscreen images first
             fullscreenableImages.forEach(i => i.classList.remove("fullscreen"));
 
+            // Roditeljski grid-item može imati rezidualni transform od reveal
+            // animacije, što bi (kao containing block) razbilo position:fixed
+            // fullscreen. Neutralši ga pri ulasku, vrati pri izlasku.
+            const cell = img.closest(".gallery-grid-item, .menu-grid-item");
+
             if (!isFullscreen) {
                 // Enter fullscreen
+                if (cell) cell.style.transform = "none";
                 img.classList.add("fullscreen");
                 document.body.style.overflow = "hidden";
             } else {
                 // Exit fullscreen
                 img.classList.remove("fullscreen");
+                if (cell) cell.style.transform = "";
                 document.body.style.overflow = "";
             }
             // MAP FIX: No need to explicitly set pointerEvents: auto here, 
             // the CSS !important rule handles it.
         });
+    });
+
+    /* -------------------- MAPE: graceful loading (fade-in) -------------------- */
+    // Prikazuje suptilan spinner dok se Google Maps embed ne učita, pa mapu
+    // blago „utopi". Fail-safe: ako `load` ne okine, tajmer svejedno otkrije mapu.
+    const mapWraps = document.querySelectorAll(".location-map");
+    mapWraps.forEach((wrap) => {
+        const iframe = wrap.querySelector("iframe");
+        if (!iframe) return;
+        wrap.classList.add("map-fade");
+        const reveal = () => wrap.classList.add("map-ready");
+        iframe.addEventListener("load", reveal, { once: true });
+        // Rezerva: ako je iframe već keširan/učitao se pre listenera ili load ne okine.
+        setTimeout(reveal, 4000);
     });
 
     /* -------------------- DROPDOWN MENUS -------------------- */
