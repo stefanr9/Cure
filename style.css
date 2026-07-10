@@ -70,16 +70,21 @@ body.no-scroll {
 .nav-links a {
     text-decoration: none;
     color: #000;
-    font-weight: bold;
+    font-weight: 800;
     font-size: 1.8rem;
     transition: color 0.3s;
+    /* iznad ukrasne šare, bez podloge — tekst leži direktno na šari */
+    position: relative;
+    z-index: 2;
 }
 .nav-links a:hover { color: #5f021f; }
 
 .logo {
     flex-shrink: 0;
     text-align: center;
-   
+    /* logotip iznad ukrasne šare */
+    position: relative;
+    z-index: 2;
 }
 .logo img {
     height: 7.5rem;
@@ -88,6 +93,21 @@ body.no-scroll {
 
 .left-nav { justify-content: flex-end; margin-right: 1rem; }
 .right-nav { justify-content: flex-start; margin-left: 1rem; }
+
+/* Ukrasna šara popunjava samo prazan prostor: levo do „Почетна" i desno od „О нама" */
+.left-nav::before,
+.right-nav::after {
+    content: "";
+    flex: 1 1 auto;
+    min-width: 2rem;
+    align-self: center;
+    height: 2.75rem;
+    background-image: url("images/Cure%20slajfna.png");
+    background-repeat: repeat-x;
+    background-size: auto 100%; /* proporcionalno, bez deformacije */
+}
+.left-nav::before { background-position: left center; margin-right: 1.25rem; }
+.right-nav::after { background-position: right center; margin-left: 1.25rem; }
 
 /* Dropdown desktop */
 .dropdown { position: relative; }
@@ -134,6 +154,14 @@ body.no-scroll {
 
 /* =================== MOBILE / TABLET =================== */
 @media (max-width: 1024px) {
+    /* Na mobilnom nema bočne navigacije — šara ide preko celog headera */
+    .header {
+        background-image: url("images/Cure%20slajfna.png");
+        background-repeat: repeat-x;
+        background-position: center center;
+        background-size: auto 2.75rem;
+    }
+
     .navbar {
         justify-content: center;
         align-items: center;
