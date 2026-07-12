@@ -29,7 +29,7 @@ body {
        (skalira i period i razmak traka, pa odnos ostaje isti). */
     --pattern-angle: -24.098deg;  /* trake koje padaju s desna na levo */
     --pattern-angle-alt: 24.098deg; /* suprotni smer — s leva na desno */
-    --pattern-opacity: 0.09;      /* jačina PO SLOJU (dva sloja se ukrštaju, pa je presek tamniji) */
+    --pattern-opacity: 0.15;      /* jačina PO SLOJU (dva sloja se ukrštaju, pa je presek tamniji) */
     --pattern-blur: 2px;          /* mekoća */
     --pattern-size: 185px;        /* period motiva; veće = krupnija i ređa šara */
     --pattern-overscan: 2;        /* koliko je sloj veći od ekrana (2 = 200%, da rotacija ne oglodava uglove) */
