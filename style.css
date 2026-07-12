@@ -14,6 +14,76 @@ body {
     background-color: #fffaf3;
     color: #333;
     overflow: auto;
+    overflow-x: hidden;
+}
+
+/* =================== DEKORATIVNA POZADINA (šara preko cele strane) ===================
+   Sve za štelovanje je ovde. Slika "cure-pattern-tile.png" je originalna šara sa
+   dodatim providnim razmakom iznad/ispod, pa se trake ne slepljuju pri ponavljanju. */
+:root {
+    /* UGAO NIJE PROIZVOLJAN — 24.098° je izveden da se motivi poklope na presecima.
+       Pločica "cure-pattern-tile.png" je tačno JEDAN period motiva širine, a visoka
+       W*√5, i motiv joj je u centru. Uz uglove ±atan(W/H) = ±24.098° i obe pozadine
+       usidrene na centar, svaki presek trake m i trake n pada tačno na centar motiva
+       oba sloja. Ako menjaš ugao, poklapanje se gubi — ali --pattern-size smeš slobodno
+       (skalira i period i razmak traka, pa odnos ostaje isti). */
+    --pattern-angle: -24.098deg;  /* trake koje padaju s desna na levo */
+    --pattern-angle-alt: 24.098deg; /* suprotni smer — s leva na desno */
+    --pattern-opacity: 0.09;      /* jačina PO SLOJU (dva sloja se ukrštaju, pa je presek tamniji) */
+    --pattern-blur: 2px;          /* mekoća */
+    --pattern-size: 185px;        /* period motiva; veće = krupnija i ređa šara */
+    --pattern-overscan: 2;        /* koliko je sloj veći od ekrana (2 = 200%, da rotacija ne oglodava uglove) */
+    --pattern-fade-start: 12vmax; /* do ovde je pattern potpuno nevidljiv (centar ekrana, gde je tekst) */
+    --pattern-fade-end: 48vmax;   /* od ovde je pattern pun */
+}
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: calc(100vw * var(--pattern-overscan));
+    height: calc(100vh * var(--pattern-overscan));
+    z-index: -1;
+    pointer-events: none;
+
+    background-image: url("images/cure-pattern-tile.png");
+    background-repeat: repeat;
+    background-size: var(--pattern-size) auto; /* auto = bez deformacije šare */
+    /* obavezno center: sidri obe pozadine u istu tačku (centar ekrana), pa se tu
+       trake oba sloja seku tačno na motivu — odatle poklapanje ide dalje po celoj mreži */
+    background-position: center;
+
+    opacity: var(--pattern-opacity);
+    filter: blur(var(--pattern-blur));
+
+    /* bledi ka centru ekrana da tekst ostane čitljiv */
+    -webkit-mask-image: radial-gradient(circle at center,
+        transparent var(--pattern-fade-start), #000 var(--pattern-fade-end));
+    mask-image: radial-gradient(circle at center,
+        transparent var(--pattern-fade-start), #000 var(--pattern-fade-end));
+}
+
+/* sloj 1: trake padaju s desna na levo */
+body::before {
+    transform: translate(-50%, -50%) rotate(var(--pattern-angle));
+}
+
+/* sloj 2: iste trake u suprotnom smeru, s leva na desno.
+   Bez pomeraja — ista faza kao sloj 1, inače preseci beže sa motiva. */
+body::after {
+    transform: translate(-50%, -50%) rotate(var(--pattern-angle-alt));
+}
+
+/* Mobilni: manja pločica bi bila pregusta, pa je držimo krupnijom u odnosu na ekran */
+@media (max-width: 768px) {
+    :root {
+        --pattern-size: 115px;   /* samo skala — poklapanje preseka ostaje netaknuto */
+        --pattern-opacity: 0.08; /* dva sloja na malom ekranu brzo postanu bučna */
+        --pattern-fade-start: 8vmax;
+        --pattern-fade-end: 40vmax;
+    }
 }
 /* Lock page scroll when sidebar is active */
 body.no-scroll {
@@ -47,6 +117,7 @@ body.no-scroll {
 
     --sidebar-width: 14rem;
     --header-height: 8rem;
+    --navbar-pad-x: 1rem;
 }
 
 .navbar {
@@ -54,7 +125,7 @@ body.no-scroll {
     align-items: center;
     justify-content: space-between;
     position: relative;
-    padding: 0 1rem;
+    padding: 0 var(--navbar-pad-x);
     height: var(--header-height);
 }
 
@@ -106,8 +177,18 @@ body.no-scroll {
     background-repeat: repeat-x;
     background-size: auto 100%; /* proporcionalno, bez deformacije */
 }
-.left-nav::before { background-position: left center; margin-right: 1.25rem; }
-.right-nav::after { background-position: right center; margin-left: 1.25rem; }
+/* negativna margina poništava padding navbara, pa šara ide do same ivice ekrana,
+   dok linkovi i logo zadržavaju svoj razmak od ivice */
+.left-nav::before {
+    background-position: left center;
+    margin-right: 1.25rem;
+    margin-left: calc(-1 * var(--navbar-pad-x));
+}
+.right-nav::after {
+    background-position: right center;
+    margin-left: 1.25rem;
+    margin-right: calc(-1 * var(--navbar-pad-x));
+}
 
 /* Dropdown desktop */
 .dropdown { position: relative; }
