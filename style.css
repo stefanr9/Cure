@@ -79,8 +79,9 @@ body::after {
 /* Mobilni: manja pločica bi bila pregusta, pa je držimo krupnijom u odnosu na ekran */
 @media (max-width: 768px) {
     :root {
+        /* jačinu namerno NE overrajdujemo — telefon nasleđuje --pattern-opacity
+           odozgo, pa se šteluje sa jednog mesta (linija 32) */
         --pattern-size: 115px;   /* samo skala — poklapanje preseka ostaje netaknuto */
-        --pattern-opacity: 0.08; /* dva sloja na malom ekranu brzo postanu bučna */
         --pattern-fade-start: 8vmax;
         --pattern-fade-end: 40vmax;
     }
