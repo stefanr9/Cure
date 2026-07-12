@@ -453,6 +453,18 @@ body.no-scroll {
     }
 }
 
+/* Crossfade koji uvek daje zbir prozirnosti = 1 (koristi se samo na telefonu).
+   Ciklus je 24s, slajdovi kreću na 0s/8s/16s -> 8s = 33.333%, prelaz 1.5s = 6.25%.
+   Dok jedan slajd nestaje, sledeći se pojavljuje istom brzinom, pa crna pozadina
+   hera nikad ne probije. Zum se vraća na 1 dok je slajd nevidljiv. */
+@keyframes fadeMobile {
+    0%      { opacity: 0; transform: scale(1); }
+    6.25%   { opacity: 1; }
+    33.333% { opacity: 1; }
+    39.583% { opacity: 0; transform: scale(1.06); }
+    100%    { opacity: 0; transform: scale(1); }
+}
+
 /* Hero Header */
 .hero-content {
     z-index: 10;
@@ -526,10 +538,22 @@ body.no-scroll {
     }
 }
 @media (max-width: 768px) {
+    /* ===== HEADER PRIVREMENO SAKRIVEN NA TELEFONU =====
+       Kod headera, burgera i mobilnog sidebara je NETAKNUT u index.html i script.js —
+       ovde je samo sakriven, jer ćemo navigaciju vraćati u drugom obliku.
+       .burger i .mobile-sidebar su deca <header>, pa ih ovo gasi zajedno s njim.
+       DA VRATIŠ: obriši ovo jedno pravilo. */
+    .header {
+        display: none;
+    }
+
     .hero {
         width: 100%;
-        height: 45vh;
-        margin-top: 120px;
+        /* dvh umesto vh zbog adresne trake u mobilnim browserima — vh ne računa
+           nju, pa bi hero bio viši od vidljivog. 110 = malo duži od ekrana. */
+        height: 110vh;       /* fallback za stare browsere */
+        height: 110dvh;
+        margin-top: 0;       /* header je sakriven — nema šta da se kompenzuje */
         padding: 0 1rem;
         display: flex;
         flex-direction: column;
@@ -537,6 +561,23 @@ body.no-scroll {
         align-items: center;     /* H1 centered horizontally */
         text-align: center;
         position: relative;
+    }
+
+    /* Zatamnjenje preko slike da tekst ostane čitljiv bez obzira koji je slajd.
+       Iznad slidera (z-index auto), ispod teksta (z-index 2). */
+    .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.40) 0%,
+            rgba(0, 0, 0, 0.12) 35%,
+            rgba(0, 0, 0, 0.26) 70%,
+            rgba(0, 0, 0, 0.42) 100%
+        );
     }
 
     /* Hero Header (h1 stays centered) */
@@ -575,17 +616,50 @@ body.no-scroll {
         padding: 0.4rem 1.2rem;
     }
 
+    /* Slider na desktopu ima overscan (top:-11%, height:122%) za Ken Burns pomeraj.
+       Na telefonu ga gasimo: dodatno je zumirao uspravni kadar i gurao natpis na
+       slici pravo ispod naslova, pa su se dva bela teksta preklapala. */
+    .hero-slider {
+        top: 0;
+        height: 100%;
+    }
+
+    /* Ispravan crossfade — zbir prozirnosti sva tri slajda je UVEK 1.
+       Original (@keyframes fade) drži slajd prozirnim od 50% do 100% ciklusa, pa uz
+       tri slajda na 24s sa razmakom od 8s postoje trenuci kad je zbir ~0.67 i kroz
+       njih probija crna pozadina hera — hero povremeno potamni skoro do crnog.
+       Isti bug postoji i na desktopu; tamo ga NISAM dirao. */
     .hero-slide {
-        background-position: center center;
+        animation-name: fadeMobile;
+    }
+
+    /* ===== USPRAVNE VERZIJE HERO SLIKA (samo telefon) =====
+       Originali su pejzažni (~1.5:1) pa ih je cover na portret ekranu sekao na
+       uski pojas po sredini. Ovo su namenski uspravni kadrovi, rađeni iz
+       punih rezolucija (hero1/hero3 4237px i 4240px široki, iz commita fdf11de).
+       Kod hero2 plata NIJE sečena — pozadina je produžena gore/dole.
+
+       !important je nužan: slike su zadate inline u index.html, a inline stil
+       inače pobeđuje stylesheet. Gađamo :nth-child jer postojeća pravila
+       .hero-slide:nth-child(n) imaju veću specifičnost i vratila bi stari kadar. */
+    .hero-slide:nth-child(1) {
+        background-image: url("Fotografije/Home/Hero/hero1-mobile.jpg") !important;
+        background-position: center center !important;
+    }
+    .hero-slide:nth-child(2) {
+        background-image: url("Fotografije/Home/Hero/hero2-mobile.jpg") !important;
+        background-position: center center !important;
+    }
+    .hero-slide:nth-child(3) {
+        background-image: url("Fotografije/Home/Hero/hero3-mobile.jpg") !important;
+        background-position: center center !important;
     }
 }
 
 /* Extra small devices (mobile portrait) */
 @media (max-width: 480px) {
-    .hero {
-        height: 45vh;
-        margin-top: 100px;
-    }
+    /* visinu i margin-top NE diramo — nasleđuju se iz bloka za 768px
+       (ceo ekran, bez razmaka na vrhu) */
 
     .hero-content h1 {
         font-size: 4rem;
@@ -687,7 +761,92 @@ body.no-scroll {
     }
 }
 
+/* ===== PRELAZ HERO -> NORMALNA POZADINA (samo telefon) =====
+   Šara ide preko cele širine, logo na sredini. Na desktopu se ne prikazuje —
+   tamo header već nosi i logo i šaru. */
+.hero-divider {
+    display: none;
+}
 
+@media (max-width: 768px) {
+    .hero-divider {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 7rem;
+        background-image: url("images/Cure%20slajfna.png");
+        background-repeat: repeat-x;
+        background-position: center center;
+        background-size: auto 2.5rem; /* proporcionalno, bez deformacije */
+    }
+
+    .hero-divider img {
+        display: block;
+        height: 6rem;
+        width: auto;
+        /* logo ima providnu pozadinu, pa bi mu šara prolazila kroz uglove oko pečata;
+           krug u boji stranice je „preseca" i logo čita kao medaljon na traci */
+        background: #fffaf3;
+        border-radius: 50%;
+        padding: 0.3rem;
+    }
+}
+
+/* ===== KARTICE ISPOD HERA: naizmenično slika/tekst (samo telefon) =====
+   Jelovnik  -> slika LEVO,  tekst desno
+   Galerija  -> slika DESNO, tekst levo   (row-reverse)
+   Kontakt   -> slika LEVO,  tekst desno
+   Ide POSLE bloka od 600px da bi ga pregazio i na najužim ekranima. */
+@media (max-width: 768px) {
+    .image-links {
+        flex-direction: column;
+        align-items: stretch;
+        margin: 0;
+        /* uski paddinzi: na 390px svaki piksel ide slici i tekstu */
+        padding: 1.25rem 0.6rem;
+        gap: 1rem;
+    }
+
+    .image-link {
+        display: flex;
+        align-items: stretch;   /* slika se rasteže na visinu teksta */
+        gap: 0.7rem;
+        flex: 1 1 auto;
+        width: auto;
+        max-width: 100%;
+        margin-bottom: 0;
+        padding: 0.65rem;
+        text-align: left;       /* centriran tekst u uskoj koloni se lomi ružno */
+    }
+
+    /* srednja kartica (Galerija) — slika na desnu stranu */
+    .image-link:nth-child(2) {
+        flex-direction: row-reverse;
+    }
+
+    .image-link a {
+        flex: 0 0 47%;
+        display: block;
+        min-height: 200px;
+    }
+
+    .image-link img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        aspect-ratio: auto;     /* gasi 16/9 iz bloka za 600px */
+        border-radius: 8px;
+    }
+
+    .image-link p {
+        flex: 1 1 auto;
+        margin-top: 0;
+        padding: 0;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        align-self: center;
+    }
+}
 
 /* Home About Section */
 .home-about {
@@ -2212,3 +2371,169 @@ button:focus-visible,
    ranije gasio animacije pri prefers-reduced-motion je namerno uklonjen.
    Da se pristupačnost vrati, ovde dodaj @media (prefers-reduced-motion: reduce)
    koji gasi hero animaciju/tranzicije i pinuje prvi hero slajd. ---- */
+
+/* =====================================================================
+   FLOATING DOCK — mobilna navigacija (Aceternity stil)
+   Vanilla port React/framer-motion komponente (vidi floating-dock.js).
+   Vidi se SAMO na telefonu (≤768px), gde je header sakriven.
+
+   Mapiranje tokena iz reference na paletu ovog projekta:
+     gold     -> --fdock-accent  (#6e4446, ista boja kao .hero-button)
+     charcoal -> --fdock-dark    (tamna bordo podloga)
+     cream    -> --fdock-light   (#fffaf3, boja pozadine sajta)
+
+   Spring iz framer-motiona (stiffness 400, damping 26) nema direktan CSS
+   ekvivalent — aproksimiran je cubic-bezier krivom sa prebačajem.
+   ===================================================================== */
+.fdock {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .fdock {
+        --fdock-accent: #6e4446;
+        --fdock-dark: #40191c;
+        --fdock-light: #fffaf3;
+        --fdock-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* ~ spring sa prebačajem */
+
+        display: block;
+        position: fixed;
+        bottom: 24px;  /* bottom-6 */
+        right: 20px;   /* right-5 */
+        z-index: 1200; /* iznad sadržaja; header je na telefonu ionako sakriven */
+    }
+
+    .fdock-list {
+        position: absolute;
+        bottom: 64px;  /* bottom-16 — stack ide IZNAD dugmeta */
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 12px;     /* gap-3 */
+    }
+
+    .fdock-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        white-space: nowrap;
+
+        /* zatvoreno stanje */
+        opacity: 0;
+        transform: translateY(12px) scale(0.8);
+        pointer-events: none;
+        transition:
+            opacity 0.22s ease-in var(--out-delay),
+            transform 0.22s ease-in var(--out-delay);
+    }
+
+    .fdock.is-open .fdock-item {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+        transition:
+            opacity 0.42s var(--fdock-spring) var(--in-delay),
+            transform 0.42s var(--fdock-spring) var(--in-delay);
+    }
+
+    .fdock-pill {
+        border-radius: 999px;
+        border: 1px solid rgba(255, 250, 243, 0.22);
+        background: rgba(64, 25, 28, 0.9);
+        padding: 6px 12px;               /* px-3 py-1.5 */
+        font-size: 0.75rem;              /* text-xs */
+        font-weight: 500;
+        color: var(--fdock-light);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(4px);
+    }
+
+    .fdock-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 44px;                    /* h-11 w-11 */
+        width: 44px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 250, 243, 0.28);
+        background: rgba(64, 25, 28, 0.9);
+        color: var(--fdock-light);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(4px);
+    }
+
+    .fdock-svg {
+        height: 20px;                    /* h-5 w-5 */
+        width: 20px;
+    }
+
+    .fdock-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 56px;                    /* h-14 w-14 */
+        width: 56px;
+        cursor: pointer;
+        border-radius: 999px;
+        border: 1px solid rgba(110, 68, 70, 0.4);
+        background: var(--fdock-accent);
+        color: var(--fdock-light);
+        box-shadow: 0 20px 25px -5px rgba(110, 68, 70, 0.35);
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .fdock-btn:active {
+        transform: scale(0.95);
+    }
+
+    .fdock-btn-svg {
+        height: 24px;                    /* h-6 w-6 */
+        width: 24px;
+        transition: transform 0.3s ease;
+    }
+    .fdock.is-open .fdock-btn-svg {
+        transform: rotate(45deg);        /* hamburger -> „+" */
+    }
+
+    /* zamena hamburgera i „+" (u referenci je uslovni render dva <path>-a) */
+    .fdock-plus { opacity: 0; }
+    .fdock.is-open .fdock-bars { opacity: 0; }
+    .fdock.is-open .fdock-plus { opacity: 1; }
+}
+
+/* =====================================================================
+   KARTICE NA POČETNOJ — popravka glitcha na telefonu
+   ---------------------------------------------------------------------
+   .image-link ima `transition: transform .3s` (zbog hover podizanja), a GSAP
+   reveal upisuje transform svaki frejm. Browser na svaku izmenu kreće novu
+   0.3s tranziciju, pa transform kasni za GSAP-om (mereno: opacity 0.20 dok je
+   transform tek na -109 umesto -89), a na kraju `clearProps` skloni transform
+   usred tranzicije -> vidljiv trzaj.
+
+   Na telefonu hover ionako ne postoji (i „zaglavi se" posle dodira), pa
+   transform tranziciju gasimo — GSAP tada animira sam, bez borbe.
+
+   Mora biti NA KRAJU fajla: pravila .image-link/.image-link:hover su na
+   ~2204 i inače bi (ista specifičnost, kasnije u fajlu) pregazila ovo.
+   ===================================================================== */
+@media (max-width: 768px) {
+    .image-links {
+        /* kartica „Галерија" ulazi sa x:+110, dakle van desne ivice — bez ovoga
+           body.scrollWidth skoči sa 390 na 490 i mobilni browser trza.
+           clip (a ne hidden) ne pravi scroll kontejner. */
+        overflow-x: clip;
+    }
+
+    .image-link {
+        transition: box-shadow 0.3s ease; /* bez transform — to je bio sudar sa GSAP-om */
+        /* will-change OSTAJE: kartica dobija svoj GPU sloj, pa se dok ulazi ne
+           preiscrtava preko zamućene fiksne šare u pozadini (to je seckalo skrol) */
+        will-change: transform;
+    }
+
+    .image-link:hover {
+        transform: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+}

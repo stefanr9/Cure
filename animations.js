@@ -145,18 +145,60 @@
             }
         }
 
+        var isPhone = window.matchMedia("(max-width: 768px)").matches;
+
         /* ---------------- HERO parallax (pomeranje pri skrolu) ----------------
            Pozadina se pomera sporije, tekst brže -> osećaj dubine.
-           yPercent se KOMBINUJE sa intro `y` (px) jer GSAP čuva odvojeno. */
-        parallax(".hero-slider", { yPercent: -8, trigger: ".hero", scrub: 0.6 });
+           yPercent se KOMBINUJE sa intro `y` (px) jer GSAP čuva odvojeno.
+
+           Slider parallax NE radi na telefonu: pomera slider 8% naviše, a na desktopu
+           to pokriva overscan (top:-11%, height:122%). Na telefonu je overscan ugašen
+           (zumirao je uspravni kadar), pa bi parallax ogolio crnu pozadinu na dnu hera. */
+        if (!isPhone) {
+            parallax(".hero-slider", { yPercent: -8, trigger: ".hero", scrub: 0.6 });
+        }
         parallax(".hero-content", { yPercent: -48, trigger: ".hero", scrub: 0.5 });
         parallax(".hero-content-bottom", { yPercent: -26, trigger: ".hero", scrub: 0.5 });
 
         /* ---------------- POČETNA ---------------- */
-        // 3 kartice ulaze naizmenično (leva/sredina/desna) uz blagi zum
-        reveal(".image-links .image-link:nth-child(1)", { x: -50, y: 20, scale: 0.94 });
-        reveal(".image-links .image-link:nth-child(2)", { y: 44, scale: 0.94, duration: 0.95 });
-        reveal(".image-links .image-link:nth-child(3)", { x: 50, y: 20, scale: 0.94 });
+        /* Kartice: na desktopu stoje u redu (leva/sredina/desna) pa ulaze ka centru.
+           Na telefonu su naslagane naizmenično, pa svaka ulazi sa one strane na kojoj
+           joj je slika: Jelovnik s leva, Galerija s desna, Kontakt s leva. */
+        if (isPhone) {
+            /* JEDAN okidač za sve tri kartice, na celoj sekciji. Ranije je svaka
+               imala svoj (trigger: sama kartica, "top 85%"), pa su se pri sporom
+               skrolu palile jedna po jedna i animacija se stalno preklapala sa
+               skrolom -> seckanje. Sad se okine jednom i odigra do kraja, a razmak
+               između kartica pravi stagger, ne scroll pozicija. */
+            var cards = qa(".image-links .image-link");
+            if (cards.length) {
+                gsap.fromTo(
+                    cards,
+                    {
+                        opacity: 0,
+                        // Galerija (srednja) ulazi s desna, ostale s leva
+                        x: function (i) { return i === 1 ? 110 : -110; }
+                    },
+                    {
+                        opacity: 1,
+                        x: 0,
+                        duration: 0.9,
+                        ease: "power3.out",
+                        stagger: 0.12,
+                        clearProps: "transform",
+                        scrollTrigger: {
+                            trigger: ".image-links",
+                            start: "top 80%",
+                            once: true
+                        }
+                    }
+                );
+            }
+        } else {
+            reveal(".image-links .image-link:nth-child(1)", { x: -50, y: 20, scale: 0.94 });
+            reveal(".image-links .image-link:nth-child(2)", { y: 44, scale: 0.94, duration: 0.95 });
+            reveal(".image-links .image-link:nth-child(3)", { x: 50, y: 20, scale: 0.94 });
+        }
         reveal(".home-about h1", { y: 42, scale: 0.96, stagger: 0.1 });
         reveal(".home-about .divider, .home-about .divider2", { scale: 0.8, duration: 0.9 });
         reveal(".home-about p", { y: 34, stagger: 0.12 });
