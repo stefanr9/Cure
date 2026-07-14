@@ -25,7 +25,7 @@
         { title: "Јеловник", href: "menu.html",     icon: "utensils" },
         { title: "Локације", href: "location.html", icon: "pin" },
         { title: "Галерија", href: "gallery.html",  icon: "image" },
-        { title: "Контакт",  href: "location.html", icon: "phone" },
+        { title: "Контакт",  href: "contact.html",  icon: "phone" },
         { title: "О нама",   href: "about.html",    icon: "info" }
     ];
 

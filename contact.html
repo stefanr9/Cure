@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Контакт</title>
+  <script>
+    (function () {
+      try {
+        document.documentElement.classList.add("anim");
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="Fotografije/favicon.png" type="image/png" />
+</head>
+<body>
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <nav class="navbar">
+      <!-- Left nav (desktop only) -->
+      <ul class="nav-links left-nav">
+        <li><a href="index.html">Почетна</a></li>
+        <li class="dropdown">
+          <a href="#">Јеловник <span class="arrow">▾</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="menu.html">Ресторан</a></li>
+            <li><a href="menu2.html">Кафана</a></li>
+            <li><a href="menu3.html">Брза храна</a></li>
+            <li><a href="menu4.html">Пицерија</a></li>
+          </ul>
+        </li>
+        <li><a href="location.html">Локације</a></li>
+      </ul>
+      <!-- Logo -->
+      <div class="logo">
+        <img src="logo.png" alt="Logo" />
+      </div>
+      <!-- Burger (mobile only) -->
+      <button class="burger" id="burger">
+        <img src="burger1.png" alt="Menu" />
+      </button>
+      <!-- Right nav (desktop only) -->
+      <ul class="nav-links right-nav">
+        <li><a href="gallery.html">Галерија</a></li>
+        <li><a href="contact.html">Контакт</a></li>
+        <li><a href="about.html">О нама</a></li>
+      </ul>
+    </nav>
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobileSidebar">
+      <ul class="mobile-nav">
+        <li><a href="index.html">Почетна</a></li>
+        <li class="dropdown">
+          <a href="#">Јеловник <span class="arrow">▾</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="menu.html">Ресторан</a></li>
+            <li><a href="menu2.html">Кафана</a></li>
+            <li><a href="menu3.html">Брза храна</a></li>
+            <li><a href="menu4.html">Пицерија</a></li>
+          </ul>
+        </li>
+        <li><a href="location.html">Локације</a></li>
+        <li><a href="gallery.html">Галерија</a></li>
+        <li><a href="contact.html">Контакт</a></li>
+        <li><a href="about.html">О нама</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="contact-container">
+    <h1 class="h1loc">Контакт</h1>
+    <img src="Fotografije/Home/divider.png" alt="Divider" class="divider" />
+    <p class="contact-intro">
+      <b>Позовите нас, поручите или резервишите сто — увек нам је драго да чујемо госте.
+      Испод су бројеви телефона, радно време и адресе свих наших објеката.</b>
+    </p>
+
+    <!-- ===== KARTICE SA KONTAKTIMA ===== -->
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h3>Ресторан Ћуретов Сокак</h3>
+        <ul class="contact-phones">
+          <li>
+            <span class="contact-label">Резервације</span>
+            <a href="tel:012345678">012/345-678</a>
+          </li>
+          <li>
+            <span class="contact-label">Достава</span>
+            <a href="tel:012345678">012/345-678</a>
+          </li>
+        </ul>
+        <h4>Радно време</h4>
+        <p>Понедељак – Недеља: 08:00 – 22:00</p>
+        <h4>Адреса</h4>
+        <p>Улица 61 бр. 2, Атеница, Чачак</p>
+        <a class="contact-map-link"
+           href="https://www.google.com/maps?ll=43.868727,20.375982&z=16&t=m&hl=en&gl=RS&mapclient=embed&cid=11643487034030521929"
+           target="_blank" rel="noopener noreferrer">Погледај на мапи</a>
+      </div>
+
+      <div class="contact-card">
+        <h3>Кафана Роштиљ Ћуре</h3>
+        <ul class="contact-phones">
+          <li>
+            <span class="contact-label">Поручивање и достава</span>
+            <a href="tel:032365885">032/365-885</a>
+          </li>
+        </ul>
+        <h4>Радно време</h4>
+        <p>Понедељак – Недеља: 08:00 – 23:00</p>
+        <h4>Адреса</h4>
+        <p>Сергеја Јесењина бр. 2, Атеница, Чачак</p>
+        <a class="contact-map-link"
+           href="https://www.google.com/maps?ll=43.868727,20.375982&z=16&t=m&hl=en&gl=RS&mapclient=embed&cid=11643487034030521929"
+           target="_blank" rel="noopener noreferrer">Погледај на мапи</a>
+      </div>
+
+      <div class="contact-card">
+        <h3>Брза храна Ћуре Роштиљ</h3>
+        <ul class="contact-phones">
+          <li>
+            <span class="contact-label">Поручивање</span>
+            <a href="tel:062321032">062/321-032</a>
+          </li>
+        </ul>
+        <h4>Радно време</h4>
+        <p>Понедељак – Субота: 08:00 – 23:00</p>
+        <p>Недеља: Затворено</p>
+        <h4>Адреса</h4>
+        <p>Синђелићева бр. 1, Чачак</p>
+        <a class="contact-map-link"
+           href="https://www.google.com/maps/place/Brza+Hrana+Ro%C5%A1tilj+%C4%86ure/@43.889647,20.350249,19z/data=!4m6!3m5!1s0x47577300704b70b7:0x5f77f018586cf794!8m2!3d43.889647!4d20.3502494!16s%2Fg%2F11vz0_3d50?hl=en&entry=ttu"
+           target="_blank" rel="noopener noreferrer">Погледај на мапи</a>
+      </div>
+
+      <div class="contact-card">
+        <h3>Пицерија Ћуре</h3>
+        <ul class="contact-phones">
+          <li>
+            <span class="contact-label">Поручивање</span>
+            <a href="tel:062321033">062/321-033</a>
+          </li>
+        </ul>
+        <h4>Радно време</h4>
+        <p>Понедељак – Субота: 08:00 – 00:00</p>
+        <p>Недеља: Затворено</p>
+        <h4>Адреса</h4>
+        <p>Синђелићева бр. 8А, Чачак</p>
+        <a class="contact-map-link"
+           href="https://www.google.com/maps/place/%C4%86uretova+Ku%C4%87a+Hrane+-+Picerija/@43.8896506,20.3492961,20z/data=!4m6!3m5!1s0x47577300107fee35:0xef90339733935dae!8m2!3d43.8896447!4d20.3495029!16s%2Fg%2F11x967m9kp?entry=ttu"
+           target="_blank" rel="noopener noreferrer">Погледај на мапи</a>
+      </div>
+    </div>
+
+    <!-- ===== INSTAGRAM ===== -->
+    <section class="contact-social">
+      <h2>Можете нас наћи и на Инстаграму</h2>
+      <img src="Fotografije/Home/divider2.png" alt="Divider" class="divider2" />
+      <p><b>Пратите нас за нове фотографије, понуде и дешавања у нашим објектима.</b></p>
+      <div class="contact-social-links">
+        <a class="contact-social-link" href="https://www.instagram.com/rostilj_cure/" target="_blank" rel="noopener noreferrer">
+          <img class="insta" src="Fotografije/Location/insta.png" alt="Инстаграм" />
+          <span>@rostilj_cure</span>
+        </a>
+        <a class="contact-social-link" href="https://www.instagram.com/curetovsokak/" target="_blank" rel="noopener noreferrer">
+          <img class="insta" src="Fotografije/Location/insta.png" alt="Инстаграм" />
+          <span>@curetovsokak</span>
+        </a>
+        <a class="contact-social-link" href="https://www.instagram.com/rostilj.cure/" target="_blank" rel="noopener noreferrer">
+          <img class="insta" src="Fotografije/Location/insta.png" alt="Инстаграм" />
+          <span>@rostilj.cure</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="top-link"><a href="#">Врати се на врх</a></div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer-other footer-minimal">
+    <div class="footer-item-bottom">
+      <p><b>Copyright © 2025. Сва права задржана. Роштиљ Ћуре</b></p><br />
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="script.js"></script>
+  <script src="animations.js"></script>
+  <script src="floating-dock.js"></script>
+</body>
+</html>

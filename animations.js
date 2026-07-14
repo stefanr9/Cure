@@ -229,6 +229,11 @@
         batch(".location", { stagger: 0.12, y: 34, scale: 0.97 });
         reveal(".location-mail", { y: 24 });
 
+        /* ---------------- KONTAKT ---------------- */
+        reveal(".contact-intro", { y: 24 });
+        batch(".contact-card", { stagger: 0.1, y: 34, scale: 0.97 });
+        reveal(".contact-social", { y: 34, scale: 0.98 });
+
         /* ---------------- Footer (ostale stranice) ---------------- */
         batch(".footer-other .footer-other-item", { stagger: 0.12, y: 26 });
 

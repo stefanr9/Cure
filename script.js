@@ -1,39 +1,56 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* -------------------- IMAGE FULLSCREEN TOGGLE (Gallery + Menu) -------------------- */
-    const fullscreenableImages = document.querySelectorAll(
+    /* -------------------- LIGHTBOX (Gallery + Menu) -------------------- */
+    // Slika se prikazuje u zasebnom overlay sloju umesto da se sama ćelija iz
+    // mreže diže u position:fixed — tako grid ostaje netaknut iza overlay-a, a
+    // veličinu ne diktiraju height pravila iz mreže (portret vs. pejzаж).
+    const zoomableImages = document.querySelectorAll(
         ".gallery-grid-item img, .menu-grid-item img, .menu-section img"
     );
 
-    fullscreenableImages.forEach((img) => {
-        img.addEventListener("click", (event) => {
-            event.stopPropagation();
+    if (zoomableImages.length) {
+        const lightbox = document.createElement("div");
+        lightbox.className = "lightbox";
+        lightbox.setAttribute("aria-hidden", "true");
 
-            const isFullscreen = img.classList.contains("fullscreen");
+        const lightboxImg = document.createElement("img");
+        lightbox.appendChild(lightboxImg);
 
-            // Close all fullscreen images first
-            fullscreenableImages.forEach(i => i.classList.remove("fullscreen"));
+        const closeBtn = document.createElement("button");
+        closeBtn.type = "button";
+        closeBtn.className = "lightbox-close";
+        closeBtn.setAttribute("aria-label", "Затвори");
+        closeBtn.innerHTML = "&times;";
+        lightbox.appendChild(closeBtn);
 
-            // Roditeljski grid-item može imati rezidualni transform od reveal
-            // animacije, što bi (kao containing block) razbilo position:fixed
-            // fullscreen. Neutralši ga pri ulasku, vrati pri izlasku.
-            const cell = img.closest(".gallery-grid-item, .menu-grid-item");
+        document.body.appendChild(lightbox);
 
-            if (!isFullscreen) {
-                // Enter fullscreen
-                if (cell) cell.style.transform = "none";
-                img.classList.add("fullscreen");
-                document.body.style.overflow = "hidden";
-            } else {
-                // Exit fullscreen
-                img.classList.remove("fullscreen");
-                if (cell) cell.style.transform = "";
-                document.body.style.overflow = "";
-            }
-            // MAP FIX: No need to explicitly set pointerEvents: auto here, 
-            // the CSS !important rule handles it.
+        const openLightbox = (img) => {
+            lightboxImg.src = img.currentSrc || img.src;
+            lightboxImg.alt = img.alt || "";
+            lightbox.classList.add("open");
+            lightbox.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        };
+
+        const closeLightbox = () => {
+            lightbox.classList.remove("open");
+            lightbox.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+        };
+
+        zoomableImages.forEach((img) => {
+            img.addEventListener("click", (event) => {
+                event.stopPropagation();
+                openLightbox(img);
+            });
         });
-    });
+
+        lightbox.addEventListener("click", closeLightbox);
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") closeLightbox();
+        });
+    }
 
     /* -------------------- MAPE: graceful loading (fade-in) -------------------- */
     // Prikazuje suptilan spinner dok se Google Maps embed ne učita, pa mapu
