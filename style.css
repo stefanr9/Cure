@@ -1105,11 +1105,17 @@ body.no-scroll {
 }
 
 .recommended-item img {
-    max-width: 100%; /* Ensures the image fits within the div */
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
     border-radius: 10px; /* Rounded edges for images */
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     cursor: pointer;
 }
+.recommended-item:nth-child(2) img {
+    object-position: center 65%;
+}
+
 .recommended-item img:hover {
     transform: scale(1.05);
 }
@@ -2329,6 +2335,14 @@ html, body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
+}
+
+@media (min-width: 821px) {
+    .contact-card:nth-child(3) {
+        grid-column: 1 / -1;
+        justify-self: center;
+        width: calc((100% - 1.5rem) / 2);
+    }
 }
 
 .contact-card {

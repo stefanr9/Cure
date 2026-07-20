@@ -26,7 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.appendChild(lightbox);
 
         const openLightbox = (img) => {
-            lightboxImg.src = img.currentSrc || img.src;
+            const fullResolutionSrc = img.dataset.fullsrc || img.currentSrc || img.src;
+            lightboxImg.src = fullResolutionSrc;
             lightboxImg.alt = img.alt || "";
             lightbox.classList.add("open");
             lightbox.setAttribute("aria-hidden", "false");
