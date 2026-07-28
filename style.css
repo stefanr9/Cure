@@ -2144,6 +2144,167 @@ html, body {
         box-shadow: none !important; 
     }
 }
+/* ---- Tekstualni jelovnik (ispisane stavke) ---- */
+.menu-list {
+    max-width: 1200px;
+    margin: 0 auto 1rem;
+    text-align: left;
+}
+.menu-cat {
+    font-family: "CustomFont";
+    color: #6e4446;
+    font-size: 3.2rem;
+    text-align: center;
+    margin: 2.8rem 0 1.3rem;
+    line-height: 1.1;
+    scroll-margin-top: 12rem; /* da naslov ne ostane ispod fiksnog headera + jump navigacije */
+}
+
+/* ---- Brza navigacija (skok na segmente) ---- */
+.menu-jump {
+    position: sticky;
+    top: 8rem; /* tačno ispod fiksnog headera */
+    z-index: 900;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .5rem;
+    max-width: 1200px;
+    margin: 0 auto 1.8rem;
+    padding: .8rem 1rem;
+    background: rgba(255, 250, 243, 0.97);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 0 0 14px 14px;
+    box-shadow: 0 6px 16px rgba(110, 68, 70, 0.12);
+}
+.menu-jump a {
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #6e4446;
+    padding: .4rem .9rem;
+    border: 1.5px solid #d8b8ab;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.menu-jump a:hover,
+.menu-jump a:focus {
+    background: #6e4446;
+    color: #fff;
+    border-color: #6e4446;
+}
+.menu-items {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+}
+.menu-row { padding: .5rem 0; }
+.menu-line {
+    display: flex;
+    align-items: flex-end;
+    gap: .5rem;
+}
+.menu-row .nm {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #2c2320;
+}
+.menu-row .dots {
+    flex: 1 1 auto;
+    border-bottom: 2px dotted #c9a99a;
+    margin-bottom: .45rem;
+    min-width: 1.5rem;
+}
+.menu-row .pr {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #6e4446;
+    white-space: nowrap;
+}
+.menu-row .desc {
+    display: block;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: #9a7f6f;
+    margin-top: 2px;
+    max-width: 88%;
+}
+
+/* Pizza tabela sa veličinama */
+.menu-table-wrap {
+    overflow-x: auto;
+    margin: 0 0 1.2rem;
+    -webkit-overflow-scrolling: touch;
+}
+.pizza-table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+}
+.pizza-table th,
+.pizza-table td {
+    padding: .55rem .45rem;
+    text-align: right;
+    font-size: 1.2rem;
+    color: #2c2320;
+    border-bottom: 1px solid rgba(110, 68, 70, 0.15);
+    white-space: nowrap;
+    vertical-align: top;
+}
+.pizza-table thead th {
+    color: #6e4446;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 1.3rem;
+}
+.pizza-table td.pz-name,
+.pizza-table th.pz-name {
+    text-align: left;
+    white-space: normal;
+    width: 42%;
+}
+.pizza-table td.pz-name .nm {
+    font-size: 1.45rem;
+    font-weight: 600;
+    color: #2c2320;
+}
+.pizza-table td.pz-name .desc {
+    display: block;
+    font-size: 1rem;
+    font-style: italic;
+    color: #9a7f6f;
+    margin-top: 2px;
+}
+
+@media (max-width: 900px) {
+    .menu-section { padding: 1.2rem; }
+}
+
+@media (max-width: 600px) {
+    .menu-section { padding: 1rem 0.8rem; }
+    .menu-cat { font-size: 2.6rem; scroll-margin-top: 11rem; }
+    .menu-row .nm { font-size: 1.35rem; }
+    .menu-row .pr { font-size: 1.3rem; }
+    .menu-row .desc { max-width: 100%; }
+
+    /* Na telefonu: traka koja se skroluje po horizontali umesto prelamanja */
+    .menu-jump {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: .6rem .7rem;
+        gap: .4rem;
+        border-radius: 0;
+        margin-bottom: 1.2rem;
+    }
+    .menu-jump::-webkit-scrollbar { display: none; }
+    .menu-jump a { font-size: 1rem; padding: .35rem .75rem; }
+}
+
 /* Menu Section END */
 
 /* Location Container */
