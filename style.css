@@ -1115,9 +1115,7 @@ body.no-scroll {
     object-position: center 65%;
 }
 
-.recommended-item img:hover {
-    transform: scale(1.05);
-}
+
 
 .recommended-item h3 {
     margin: 10px 0 5px; /* Space around the header */
