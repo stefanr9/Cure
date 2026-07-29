@@ -2755,8 +2755,8 @@ html.anim .contact-social {
 }
 
 .recommended-item {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    will-change: transform;
+    
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.10);
 }
 
 
