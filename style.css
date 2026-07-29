@@ -1109,8 +1109,7 @@ body.no-scroll {
     aspect-ratio: 3 / 2;
     object-fit: cover;
     border-radius: 10px; /* Rounded edges for images */
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    cursor: pointer;
+    
 }
 .recommended-item:nth-child(2) img {
     object-position: center 65%;
