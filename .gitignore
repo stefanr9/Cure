@@ -1,0 +1,20 @@
+# Lokalna konfiguracija alata — nema veze sa sajtom.
+# Serena sama prepisuje project.yml, pa je pravila sum u istoriji.
+# Regenerise se sama na svakoj masini, tako da se nista ne gubi.
+.serena/
+.agents/
+.phcode.json
+
+# Zavisnosti
+node_modules/
+
+# Tajne — nikad u repo, ovaj repo je javan
+.env
+.env.*
+!.env.example
+
+# OS / editor smece
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
