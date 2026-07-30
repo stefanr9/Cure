@@ -2454,6 +2454,26 @@ html, body {
     object-fit: cover;      /* `contain` bi ostavio prazne pojaseve u kutiji */
     border-radius: 10px;
 }
+
+/* Brza hrana (treća lokacija) je jedini izuzetak od `cover` pravila gore.
+   location3-card.jpg je isečak originala od vrha nadstrešnice do asfalta
+   (1168x1136, odnos 1.028) — skoro kvadratan, jer je i sama zgrada takva.
+   U 3/2 kutiji bi ga `cover` odsekao ~35% visine, pa se natpis
+   „РОШТИЉ ЋУРЕ" i asfalt ne bi mogli videti istovremeno; nijedan
+   object-position to ne rešava, geometrija ne dozvoljava.
+   Zato ovde `contain` + width: auto — slika stoji CELA, samo je uža od
+   kutije, a belina kartice se vidi levo i desno. Kartica ostaje tačno
+   iste visine kao prve dve, što je i bio cilj.
+   Namerno se ne popunjavaju strane (probano blurovanjem — odbačeno):
+   ovde nema nijednog dodatog piksela, sve je prava fotografija. */
+.location-img img[src$="location3-card.jpg"] {
+    width: auto;
+    max-width: 100%;
+    height: 100%;
+    object-fit: contain;
+    margin-inline: auto;
+}
+
 .location-mail{
     font-weight: bold;
     font-size: x-large;
