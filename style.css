@@ -2429,19 +2429,29 @@ html, body {
     to { transform: rotate(360deg); }
 }
 
+/* Kutija slike ima FIKSAN odnos strana, a slika se kropuje na njega.
+   Bez ovoga visinu kartice diktira sam odnos strana slike: location1 i
+   location2 su pejzažne (1.53 i 1.56), a location3 je skoro kvadratna
+   (0.915), pa je treća kartica bila oko 250px viša od prve dve.
+   3/2 = 1.5 je namerno — najbliže postojećim pejzažnim slikama, tako da
+   se na njima kropuje svega par procenata (praktično nepromenjene), a
+   treća se svede na istu visinu. Ako dodaješ novu lokaciju, slika sme
+   biti bilo kog odnosa — kartica ostaje ista. */
 .location-img {
     display: grid;
-    grid-column: 2;        
-    grid-row: 1 / span 2;  
+    grid-column: 2;
+    grid-row: 1 / span 2;
     margin-right: 1rem;
     border-radius: 10px;
     place-items: center;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
 }
 
 .location-img img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;      /* `contain` bi ostavio prazne pojaseve u kutiji */
     border-radius: 10px;
 }
 .location-mail{
@@ -2472,18 +2482,20 @@ html, body {
     text-align: center;
     grid-column: 1;
     grid-row: 2;
-    overflow: hidden; 
+    overflow: hidden;
 }
-    
+
 .location-map {
     grid-column: 1;
     grid-row: 3;
 }
 
+/* height: auto je gazio kutiju sa fiksnim odnosom i vraćao problem —
+   na jednoj koloni je razlika bila i veća nego na desktopu. */
 .location-img img {
     width: 100%;
-    height: auto; 
-    object-fit: contain;
+    height: 100%;
+    object-fit: cover;
     border-radius: 10px;
     display: block;
 }
@@ -2505,8 +2517,8 @@ html, body {
 }
 .location-img img {
     width: 100%;
-    height: auto;
-    object-fit: contain;
+    height: 100%;
+    object-fit: cover;
     border-radius: 10px;
     display: block;
     }
