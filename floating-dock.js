@@ -28,8 +28,8 @@
         {
             title: "Јеловник", icon: "book",
             children: [
-                { title: "Ресторан",   href: "menu.html",  icon: "utensils" },
-                { title: "Кафана",     href: "menu2.html", icon: "glass" },
+                { title: "Карта пића", href: "menu2.html", icon: "glass" },
+                { title: "Јеловник",   href: "menu.html",  icon: "utensils" },
                 { title: "Брза храна", href: "menu3.html", icon: "burger" }
             ]
         },
