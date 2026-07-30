@@ -323,12 +323,21 @@ body.no-scroll {
         padding: 0.4rem 0;
     }
 
-    /* Dropdown animation (mobile) */
+    /* Dropdown animation (mobile)
+       U sidebaru podmeni ide U TOKU, ne kao absolute overlay — inače prekrije
+       stavke ispod i max-height ne može da animira (display: none nije
+       animirljiv, pa ostaje display: block a visina radi otvaranje). */
     .mobile-nav .dropdown-menu {
+        display: block;
+        position: static;
+        background: none;
+        border: none;
+        box-shadow: none;
+        min-width: 0;
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.32s ease, padding 0.32s ease;
-        padding-left: 1rem;
+        padding: 0 0 0 1rem;
         margin: 0;
     }
     .mobile-nav .dropdown.open .dropdown-menu {
@@ -2867,6 +2876,84 @@ button:focus-visible,
         transition:
             opacity 0.42s var(--fdock-spring) var(--in-delay),
             transform 0.42s var(--fdock-spring) var(--in-delay);
+    }
+
+    /* ---- Podmeni „Јеловник" (ista tri jelovnika kao desktop dropdown) ----
+       Grupa je jedan flex-child stack-a: [toggle red] + [podstavke].
+       Pošto je .fdock-list zakačen za dno, razgrtanje raste NAGORE. */
+    .fdock-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+    }
+
+    /* toggle je <button>, ali izgleda identično kao ostali redovi */
+    .fdock-toggle {
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        font: inherit;
+        cursor: pointer;
+    }
+    .fdock-toggle .fdock-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .fdock-chev {
+        height: 12px;
+        width: 12px;
+        transition: transform 0.25s ease;
+    }
+    .fdock-group.is-open .fdock-chev {
+        transform: rotate(180deg);
+    }
+
+    /* Zatvoreno: podstavke ne zauzimaju mesto u stack-u. */
+    .fdock-sub {
+        display: none;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+    }
+    .fdock-group.is-open .fdock-sub {
+        display: flex;
+    }
+
+    .fdock-subitem {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        white-space: nowrap;
+        /* 4px = pola razlike 44px vs 36px ikonice — centri kolone se poravnaju */
+        margin-right: 4px;
+    }
+    .fdock-subitem .fdock-icon {
+        height: 36px;
+        width: 36px;
+        background: rgba(64, 25, 28, 0.78);
+    }
+    .fdock-subitem .fdock-svg {
+        height: 17px;
+        width: 17px;
+    }
+    .fdock-subitem .fdock-pill {
+        font-size: 0.7rem;
+        padding: 5px 10px;
+        background: rgba(64, 25, 28, 0.78);
+    }
+
+    /* Keyframe (a ne transition) jer se stanje menja preko `display` —
+       `both` drži „from" stanje tokom stagger kašnjenja. */
+    @keyframes fdock-sub-in {
+        from { opacity: 0; transform: translateY(8px) scale(0.85); }
+        to   { opacity: 1; transform: none; }
+    }
+    .fdock-group.is-open .fdock-subitem {
+        animation: fdock-sub-in 0.34s var(--fdock-spring) var(--sub-delay) both;
     }
 
     .fdock-pill {
