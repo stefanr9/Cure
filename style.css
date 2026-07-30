@@ -643,24 +643,30 @@ body.no-scroll {
     }
 
     /* ===== USPRAVNE VERZIJE HERO SLIKA (samo telefon) =====
-       Originali su pejzažni (~1.5:1) pa ih je cover na portret ekranu sekao na
-       uski pojas po sredini. Ovo su namenski uspravni kadrovi, rađeni iz
-       punih rezolucija (hero1/hero3 4237px i 4240px široki, iz commita fdf11de).
-       Kod hero2 plata NIJE sečena — pozadina je produžena gore/dole.
+       Inline slike u index.html (hero1/2/3.jpg) su pejzažne (~1.5:1) pa ih je
+       cover na portret ekranu sekao na uski pojas po sredini. Ovde su zamenjene
+       namenski uspravnim kadrovima; desktop i dalje vuče inline slike.
+
+       Nekadašnje hero1/2/3-mobile.jpg verzije više ne postoje u repou.
+
+       Napomena o težini: sokak3 je skaliran sa 6 MB originala na 1200px širine
+       (0.53 MB) jer je predugo učitavao prvi ekran. sokak21/sokak23 su dobijeni
+       već laki (0.15 / 0.13 MB) pa NISU ponovo enkodovani — to bi samo izgubilo
+       kvalitet. Ekstenzija im je .jpeg, ne .jpg.
 
        !important je nužan: slike su zadate inline u index.html, a inline stil
        inače pobeđuje stylesheet. Gađamo :nth-child jer postojeća pravila
        .hero-slide:nth-child(n) imaju veću specifičnost i vratila bi stari kadar. */
     .hero-slide:nth-child(1) {
-        background-image: url("Fotografije/Home/Hero/hero1-mobile.jpg") !important;
+        background-image: url("Fotografije/Home/Hero/sokak3-mobile.jpg") !important;
         background-position: center center !important;
     }
     .hero-slide:nth-child(2) {
-        background-image: url("Fotografije/Home/Hero/hero2-mobile.jpg") !important;
+        background-image: url("Fotografije/Home/Hero/sokak23.jpeg") !important;
         background-position: center center !important;
     }
     .hero-slide:nth-child(3) {
-        background-image: url("Fotografije/Home/Hero/hero3-mobile.jpg") !important;
+        background-image: url("Fotografije/Home/Hero/sokak21.jpeg") !important;
         background-position: center center !important;
     }
 }
