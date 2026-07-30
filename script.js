@@ -25,17 +25,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.body.appendChild(lightbox);
 
-        const openLightbox = (img) => {
-            const fullResolutionSrc = img.dataset.fullsrc || img.currentSrc || img.src;
-            lightboxImg.src = fullResolutionSrc;
-            lightboxImg.alt = img.alt || "";
-            lightbox.classList.add("open");
+        // Čeka da <img> bude spreman za prikaz. `load` je univerzalno podržan;
+        // `decode()` je posle njega best-effort jer garantuje da je slika i
+        // dekodirana, ne samo preuzeta (bez toga velik JPEG zna da zastruže na
+        // prvom paintu). Na već keširanoj slici resolve je trenutan.
+        const whenReady = (el) => {
+            if (el.complete && el.naturalWidth) return Promise.resolve();
+            return new Promise((resolve) => {
+                el.addEventListener("load", resolve, { once: true });
+                el.addEventListener("error", resolve, { once: true });
+            }).then(() =>
+                typeof el.decode === "function" ? el.decode().catch(() => {}) : undefined
+            );
+        };
+
+        // Raste na svakom otvaranju I zatvaranju. Služi da učitavanje koje je
+        // u toku ne „iskoči" posle toga — ako se token promenio, odustajemo.
+        let openToken = 0;
+
+        const openLightbox = async (thumb) => {
+            const fullResolutionSrc = thumb.dataset.fullsrc || thumb.currentSrc || thumb.src;
+            const token = ++openToken;
+
+            // Ovde je bio bug: <img> se reciklira, a postavljanje `src` ne briše
+            // prethodni dekodirani kadar — dok se nova slika ne učita, browser
+            // prikazuje STARU. Zato je krijemo klasom `loading` (uz spinner) i
+            // otkrivamo je tek kad je nova spremna. Ne diramo `src` unaprijed:
+            // prazan/uklonjen src pali ikonicu slomljene slike.
+            lightbox.classList.add("open", "loading");
             lightbox.setAttribute("aria-hidden", "false");
+            lightboxImg.alt = thumb.alt || "";
             document.body.style.overflow = "hidden";
+
+            lightboxImg.src = fullResolutionSrc;
+            await whenReady(lightboxImg);
+
+            // Zatvoreno je ili je otvorena druga slika dok se ova učitavala.
+            if (token !== openToken) return;
+            lightbox.classList.remove("loading");
         };
 
         const closeLightbox = () => {
-            lightbox.classList.remove("open");
+            openToken++; // otkazuje otkrivanje ako je učitavanje još u toku
+            lightbox.classList.remove("open", "loading");
             lightbox.setAttribute("aria-hidden", "true");
             document.body.style.overflow = "";
         };
@@ -94,7 +126,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const dots = document.querySelectorAll('.about-dot');
 
         let currentIndex = 0;
-        let autoSlideInterval;
+        let autoSlideInterval = null;
+        let isHovered = false;
+
+        // 4000 je bilo prekratko — slika se menjala pre nego što se pogleda.
+        const SLIDE_MS = 6500;
 
         const updateDots = function() {
             dots.forEach((dot, index) => dot.classList.toggle('active', index === currentIndex));
@@ -110,25 +146,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const nextSlide = function() { showSlides(currentIndex + 1); };
         const prevSlide = function() { showSlides(currentIndex - 1); };
-        const startAutoSlide = function() { autoSlideInterval = setInterval(nextSlide, 4000); };
-        const stopAutoSlide = function() { clearInterval(autoSlideInterval); };
+
+        const stopAutoSlide = function() {
+            clearInterval(autoSlideInterval);
+            autoSlideInterval = null;
+        };
+
+        /* Uvek prvo gasi postojeći tajmer, pa pravi novi. Ovde je bio bug:
+           startAutoSlide je pravio setInterval BEZ brisanja prethodnog, a
+           mouseover/mouseout BUBBLE-uju — svaki prelaz miša sa jednog slajda
+           (ili strelice) na drugi unutar kontejnera pravio je još jedan tajmer.
+           Posle par pokreta mišem radilo je više tajmera paralelno, pa je
+           slajder „ubrzavao"; stopAutoSlide je gasio samo poslednji, zato je
+           klik na strelicu preskakao dva slajda. */
+        const restartAutoSlide = function() {
+            stopAutoSlide();
+            if (!isHovered) autoSlideInterval = setInterval(nextSlide, SLIDE_MS);
+        };
+
+        /* Ručna promena resetuje tajmer — bez toga klik pri kraju intervala
+           odmah dobije i automatski prelaz, pa se preskoči jedan slajd. */
+        const manual = function(change) {
+            return function() { change(); restartAutoSlide(); };
+        };
 
         dots.forEach((dot, index) => {
-            dot.addEventListener("click", () => {
-                showSlides(index);
-                stopAutoSlide();
-                startAutoSlide();
-            });
+            dot.addEventListener("click", manual(() => showSlides(index)));
         });
 
-        if (nextBtn) nextBtn.addEventListener("click", () => { nextSlide(); stopAutoSlide(); startAutoSlide(); });
-        if (prevBtn) prevBtn.addEventListener("click", () => { prevSlide(); stopAutoSlide(); startAutoSlide(); });
+        if (nextBtn) nextBtn.addEventListener("click", manual(nextSlide));
+        if (prevBtn) prevBtn.addEventListener("click", manual(prevSlide));
 
-        homeSliderDiv.addEventListener("mouseover", stopAutoSlide);
-        homeSliderDiv.addEventListener("mouseout", startAutoSlide);
+        /* mouseenter/mouseleave, NE mouseover/mouseout — ovi ne bubble-uju, pa
+           se pale tačno jednom na ulazu/izlazu iz kontejnera. Vežemo ih samo
+           tamo gde hover stvarno postoji: na touch ekranu se mouseenter emulira
+           na dodir, pa bi slajder ostao trajno pauziran posle prvog tapa. */
+        if (window.matchMedia("(hover: hover)").matches) {
+            homeSliderDiv.addEventListener("mouseenter", () => {
+                isHovered = true;
+                stopAutoSlide();
+            });
+            homeSliderDiv.addEventListener("mouseleave", () => {
+                isHovered = false;
+                restartAutoSlide();
+            });
+        }
 
         showSlides(currentIndex);
-        startAutoSlide();
+        restartAutoSlide();
     }
 
     /* -------------------- ABOUT PAGE SLIDERS -------------------- */
