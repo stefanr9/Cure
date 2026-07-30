@@ -20,9 +20,10 @@
 (function () {
     "use strict";
 
-    /* Iste strane kao u desktop headeru. Јеловник nije link nego podmeni sa
-       ista tri jelovnika kao dropdown na desktopu (menu4.html/Пицерија nije ni
-       u desktop dropdownu, pa nije ni ovde). */
+    /* Iste stavke kao desktop header: Јеловник nije link nego podmeni sa ista
+       tri jelovnika kao dropdown na desktopu. Изван dock-а су, исто као на
+       desktopu: Контакт (нема га више у header навигацији) и menu4.html
+       (Пицерија, није ни у desktop dropdown-у). */
     var DOCK_ITEMS = [
         { title: "Почетна",  href: "index.html",    icon: "home" },
         {
@@ -35,7 +36,6 @@
         },
         { title: "Локације", href: "location.html", icon: "pin" },
         { title: "Галерија", href: "gallery.html",  icon: "image" },
-        { title: "Контакт",  href: "contact.html",  icon: "phone" },
         { title: "О нама",   href: "about.html",    icon: "info" }
     ];
 

@@ -2934,16 +2934,18 @@ button:focus-visible,
     .fdock-subitem .fdock-icon {
         height: 36px;
         width: 36px;
-        background: rgba(64, 25, 28, 0.78);
+        background: rgba(64, 25, 28, 0.88);
     }
     .fdock-subitem .fdock-svg {
         height: 17px;
         width: 17px;
     }
+    /* 0.88 a ne 0.78: kroz previše prozirnu podlogu probija hero slika i
+       „ispere" beli tekst — podstavke su i tako manje, pa im treba kontrast. */
     .fdock-subitem .fdock-pill {
         font-size: 0.7rem;
         padding: 5px 10px;
-        background: rgba(64, 25, 28, 0.78);
+        background: rgba(64, 25, 28, 0.88);
     }
 
     /* Keyframe (a ne transition) jer se stanje menja preko `display` —
@@ -2963,7 +2965,8 @@ button:focus-visible,
         padding: 6px 12px;               /* px-3 py-1.5 */
         font-size: 0.75rem;              /* text-xs */
         font-weight: 500;
-        color: var(--fdock-light);
+        /* čisto belo, ne krem --fdock-light — na tamnoj podlozi čita se svetlije */
+        color: #fff;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25);
         backdrop-filter: blur(4px);
     }
